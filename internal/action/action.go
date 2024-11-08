@@ -36,7 +36,17 @@ func (a *Action) AddPassword(uri, username, password string) error {
 		return err
 	}
 
-	err = a.db.AddPassword(a.sess.id, uri, username, encryptedPassword)
+	encryptedUsername, err := encryption.Encrypt(username, a.sess.masterKey)
+	if err != nil {
+		return err
+	}
+
+	encryptedURI, err := encryption.Encrypt(uri, a.sess.masterKey)
+	if err != nil {
+		return err
+	}
+
+	err = a.db.AddPassword(a.sess.id, encryptedURI, encryptedUsername, encryptedPassword)
 	if err != nil {
 		return err
 	}
@@ -55,6 +65,11 @@ func (a *Action) GetPassword(selectedUri types.URI) (username string, password s
 		return "", "", err
 	}
 
+	username, err = encryption.Decrypt(username, a.sess.masterKey)
+	if err != nil {
+		return "", "", err
+	}
+
 	utils.ClipboardWriteAndErase(password, 15)
 
 	return username, password, nil
@@ -66,7 +81,17 @@ func (a *Action) ListURIs() ([]types.URI, error) {
 		return nil, err
 	}
 
-	return uris, nil
+	var decryptedUris []types.URI
+
+	for _, uri := range uris {
+		uri.Uri, err = encryption.Decrypt(uri.Uri, a.sess.masterKey)
+		if err != nil {
+			return nil, err
+		}
+		decryptedUris = append(decryptedUris, uri)
+	}
+
+	return decryptedUris, nil
 }
 
 func (a *Action) DeletePassword(uriId int) error {

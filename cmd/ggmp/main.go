@@ -21,7 +21,6 @@ const ggmp string = "\n\n" + `      ::::::::   ::::::::    :::   :::   :::::::::
 const gogetmypassword string = "\t\tgo-get-my-password\n\n"
 
 func main() {
-
 	db := database.NewDatabase("ggmp.db")
 	defer db.Close()
 
