@@ -109,7 +109,12 @@ func (a *Action) UpdatePassword(uriId int, username, password string) error {
 		return err
 	}
 
-	err = a.db.UpdatePassword(uriId, username, encryptedPassword)
+	encryptedUsername, err := encryption.Encrypt(username, a.sess.masterKey)
+	if err != nil {
+		return err
+	}
+
+	err = a.db.UpdatePassword(uriId, encryptedUsername, encryptedPassword)
 	if err != nil {
 		return err
 	}

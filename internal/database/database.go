@@ -58,7 +58,7 @@ func NewDatabase(name string) *Database {
 		"owner" REFERENCES master_account (id),
 		"uri" TEXT,
 		"username" TEXT,
-		"encryption" TEXT
+		"password" TEXT
 	);`
 	statement, err = DB.Prepare(createAccountsSchema)
 	if err != nil {
@@ -75,19 +75,19 @@ func (db *Database) Close() {
 	db.DB.Close()
 }
 
-func (db *Database) AddPassword(id int, uri, username, encryption string) error {
-	insertAccountQuery := `INSERT INTO accounts (owner, uri, username, encryption) VALUES (?, ?, ?, ?);`
+func (db *Database) AddPassword(id int, uri, username, password string) error {
+	insertAccountQuery := `INSERT INTO accounts (owner, uri, username, password) VALUES (?, ?, ?, ?);`
 	statement, err := db.executor().Prepare(insertAccountQuery)
 	if err != nil {
 		return err
 	}
 
-	statement.Exec(id, uri, username, encryption)
+	statement.Exec(id, uri, username, password)
 	return nil
 }
 
 func (db *Database) GetPassword(uriId int, ownerId int) (username string, encryptedPassword string, err error) {
-	selectAccountQuery := `SELECT username, encryption FROM accounts WHERE id = ? AND owner = ?;`
+	selectAccountQuery := `SELECT username, password FROM accounts WHERE id = ? AND owner = ?;`
 	statement, err := db.executor().Prepare(selectAccountQuery)
 
 	if err != nil {
@@ -141,15 +141,15 @@ func (db *Database) DeleteAccount(uriId int, id int) error {
 	return nil
 }
 
-func (db *Database) UpdatePassword(uriId int, username string, encryption string) error {
-	updateAccountQuery := `UPDATE accounts SET username = ?, encryption = ? WHERE id = ?;`
+func (db *Database) UpdatePassword(uriId int, username string, password string) error {
+	updateAccountQuery := `UPDATE accounts SET username = ?, password = ? WHERE id = ?;`
 	statement, err := db.executor().Prepare(updateAccountQuery)
 
 	if err != nil {
 		return err
 	}
 
-	statement.Exec(username, encryption, uriId)
+	statement.Exec(username, password, uriId)
 	return nil
 }
 
