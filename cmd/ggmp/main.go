@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 
 	"github.com/arimotearipo/ggmp/internal/action"
@@ -21,7 +22,10 @@ const ggmp string = "\n\n" + `      ::::::::   ::::::::    :::   :::   :::::::::
 const gogetmypassword string = "\t\tgo-get-my-password\n\n"
 
 func main() {
-	db := database.NewDatabase("ggmp.db")
+	file := flag.String("file", "ggmp.db", "path to database file")
+	flag.Parse()
+
+	db := database.NewDatabase(*file)
 	defer db.Close()
 
 	a := action.NewAction(db)
