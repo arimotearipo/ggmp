@@ -66,7 +66,7 @@ func Decrypt(encrypted string, masterKey []byte) (string, error) {
 	return string(plainText), nil
 }
 
-func Encrypt(password string, masterKey []byte) (ciphertText string, err error) {
+func Encrypt(plaintext string, masterKey []byte) (ciphertText string, err error) {
 	salt, err := GenerateSalt()
 	if err != nil {
 		return "", err
@@ -94,7 +94,7 @@ func Encrypt(password string, masterKey []byte) (ciphertText string, err error) 
 	}
 
 	// Encrypt. The initializationVector will be prepended to the ciphertext
-	ciphertext := gcm.Seal(initializationVector, initializationVector, []byte(password), nil)
+	ciphertext := gcm.Seal(initializationVector, initializationVector, []byte(plaintext), nil)
 
 	// Combine salt and ciphertext, then encode
 	return base64.StdEncoding.EncodeToString(append(salt, ciphertext...)), nil

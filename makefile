@@ -2,6 +2,8 @@
 BINARY_NAME=ggmp
 VERSION=1.0.0
 MAIN_PATH=./cmd/ggmp/main.go
+SEED_PATH=./cmd/seed/main.go
+LIST_PATH=./cmd/list/main.go
 
 # Build directories
 BUILD_DIR=./build
@@ -49,3 +51,9 @@ reset:
 	rm -f ggmp.db
 
 rerun: reset run
+
+seed:
+	go run ${SEED_PATH}
+
+list:
+	go run ${LIST_PATH}
